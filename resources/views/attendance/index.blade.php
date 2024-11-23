@@ -1,29 +1,44 @@
 <x-layout>
-    <!-- Admin Section -->
+    <!-- start admin -->
     <section id="admin">
+        <!-- start sidebar -->
         <x-sidenav />
+        <!-- end sidebar -->
 
+        <!-- start content -->
         <div class="content">
+            <!-- start content head -->
             <div class="head">
-                <x-topnav />
-            </div>
+                <!-- head top -->
+                <x-topnav></x-topnav>
+                <!-- end head top -->
 
+            </div>
+            <!-- end content head -->
+
+            <!-- start with the real content -->
             <div class="wrap">
                 <section class="app-content">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="m-b-lg">Guests List</h4>
-                                <button type="button" class="btn btn-info mw-md" data-toggle="modal" data-target="#addNewModal">Add New</button>
-                            </div>
+
+							<div class="mb-4">
+								<h4 class="m-b-lg mb-0">Event Attendance</h4>
+                                <p class=" docs">
+                                    If you see them and show you the code, Mark them as attended
+                                </p>
+								{{-- <button type="button" class="btn btn-info mw-md" data-toggle="modal" data-target="#addNewModal">Add New</button> --}}
+							</div>
+
+                            
+							
                         </div>
-                        
                         <div class="col-md-12">
                             <div class="widget p-lg">
-                                <p class="m-b-lg docs">You can see all the couple's guests here.</p>
                                 
-                                <!-- Filter Form -->
-                                <form method="GET" action="{{ route('guest.create') }}" class="mb-4">
+
+                                  <!-- Filter Form -->
+                                  <form method="GET" action="{{ route('guest.attendance') }}" class="mb-4">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <label for="search">Search</label>
@@ -65,10 +80,6 @@
                                         </div>
                                     </div>
                                 </form>
-                                
-
-
-                                <!-- Guests Table -->
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -79,11 +90,12 @@
                                             <th>Role</th>
                                             <th>Is Coming</th>
                                             <th>Code</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($guests as $index => $guest)
-                                            <tr>
+                                            <tr id="guest-{{ $guest->id }}" class="{{ $guest->did_come ? 'table-success' : '' }}">
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $guest->firstName }}</td>
                                                 <td>{{ $guest->lastName }}</td>
@@ -91,81 +103,67 @@
                                                 <td>{{ $guest->role ?? 'Guest' }}</td>
                                                 <td>{{ $guest->is_coming ? 'Yes' : 'No' }}</td>
                                                 <td>{{ $guest->code }}</td>
+                                                <td>
+                                                    @if ($guest->did_come)
+                                                        <button class="btn btn-warning btn-sm" onclick="toggleAttendance({{ $guest->id }}, 0)">Undo</button>
+                                                    @else
+                                                        <button class="btn btn-success btn-sm" onclick="toggleAttendance({{ $guest->id }}, 1)">Mark as Attended</button>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">No guests found.</td>
+                                                <td colspan="7" class="text-center">No guests found.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
+                                
+                                
                             </div>
                         </div>
                     </div>
                 </section>
             </div>
+            <!-- end the real content -->
         </div>
+        <!-- end content -->
     </section>
 
-    <!-- Add New Modal -->
-    <div class="modal fade" id="addNewModal" tabindex="-1" aria-labelledby="addNewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Guest</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{{ route('guest.store') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <!-- First Name Field -->
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName" class="form-control" required>
-                        </div>
-                        
-                        <!-- Last Name Field -->
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" class="form-control" required>
-                        </div>
+    <!-- end admin -->
+    <script>
+        function toggleAttendance(guestId, did_come) {
+            $.ajax({
+                url: "{{ route('guest.toggleAttendance') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    guest_id: guestId,
+                    did_come: did_come
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update the row color
+                        const row = $('#guest-' + guestId);
+                        if (did_come) {
+                            row.addClass('table-success');
+                            row.find('button').replaceWith(`<button class="btn btn-warning btn-sm" onclick="toggleAttendance(${guestId}, 0)">Undo</button>`);
+                        } else {
+                            row.removeClass('table-success');
+                            row.find('button').replaceWith(`<button class="btn btn-success btn-sm" onclick="toggleAttendance(${guestId}, 1)">Mark as Attended</button>`);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        }
+    </script>
+    <style>
+        .table-success {
+            background-color: #d4edda !important;
+        }
 
-                        <!-- Relationship Field -->
-                        <div class="form-group">
-                            <label for="relationship">Relationship</label>
-                            <select id="relationship" class="form-control" name="relationship" required>
-                                <option value="">Select relationship</option>
-                                <option value="Friend">Friend</option>
-                                <option value="Family">Family</option>
-                                <option value="Workmate">Workmate</option>
-                                <option value="Teacher">Teacher</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                        <!-- Role Field -->
-                        <div class="form-group">
-                            <label for="role">Role</label>
-                            <select id="role" class="form-control" name="role">
-                                <option value="">Select Role</option>
-                                <option value="Flower Girl">Flower Girl</option>
-                                <option value="Ring Bearer">Ring Bearer</option>
-                                <option value="Groomsman">Groomsman</option>
-                                <option value="Bridesmaid">Bridesmaid</option>
-                                <option value="Guest">Guest</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    </style>
 </x-layout>

@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function login(){
+        if (Auth::check()) {
+            return redirect()->route('admin.dashboard');
+        }
         return view('user.login');
     }
 
@@ -21,12 +26,16 @@ class UserController extends Controller
     }
 
     public function dashboard(){
-        return view('user.dashboard');
+        $totalGuest      = Guest::count();
+        $totalPlusOne    = Guest::whereNotNull('added_by')->count();
+        $totalAdmin      = User::count();
+        $totalComing     = Guest::where('is_coming', '=', true)->count();
+        // dd($totalComing);
+
+        return view('user.dashboard', compact('totalGuest', 'totalPlusOne', 'totalAdmin', 'totalComing'));
     }
 
-    public function guests(){
-        return view('user.guestlist');
-    }
+   
 
     public function plusone(){
         // return view('user.dashboard');
@@ -47,7 +56,7 @@ class UserController extends Controller
 
     public function logout(){
         Auth::logout();
-        return redirect()->route('admin.login.form');
+        return redirect()->route('login');
     }
 }
 

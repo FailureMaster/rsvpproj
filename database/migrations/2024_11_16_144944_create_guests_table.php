@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->text('code');
-            $table->string('relationship');
-            $table->boolean('is_coming')->default(null);
+            $table->string('firstName')->unique();
+            $table->string('lastName')->unique();
+            $table->string('code', 6)->unique();
+            $table->string('relationship')->nullable();
+            $table->string('role')->nullable();
+            $table->boolean('is_plus_one')->nullable();
+            $table->string('added_by')->nullable();
+            $table->boolean('is_coming')->nullable();
+            $table->boolean('did_come')->nullable();
             $table->timestamps();
         });
     }

@@ -17,19 +17,19 @@
             </li>
     
             <li class="nav-item">
-                <a href="{{ route('admin.guests') }}" class="nav-link {{ Request::routeIs('guest.create') ? 'active' : '' }}">
+                <a href="{{ route('guest.create') }}" class="nav-link {{ Request::routeIs('guest.create') ? 'active' : '' }}">
                     <i class="fas fa-users"></i> Guests List
                 </a>
             </li>
     
             <li class="nav-item">
-                <a href="{{ route('admin.plusone') }}" class="nav-link {{ Request::routeIs('admin.plusone') ? 'active' : '' }}">
+                <a href="{{ route('plusone.index') }}" class="nav-link {{ Request::routeIs('plusone.index') ? 'active' : '' }}">
                     <i class="fas fa-user-plus"></i> Plus Ones List
                 </a>
             </li>
     
             <li class="nav-item">
-                <a href="{{ route('admin.attendance') }}" class="nav-link {{ Request::routeIs('admin.attendance') ? 'active' : '' }}">
+                <a href="{{ route('guest.attendance') }}" class="nav-link {{ Request::routeIs('guest.attendance') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i> Event Attendance
                 </a>
             </li>

@@ -36,7 +36,7 @@
                             <div class="card">
                                 <div class="icon"><i class="fas fa-users"></i></div>
                                 <div class="text">
-                                    <h1>984</h1>
+                                    <h1>{{$totalGuest}}</h1>
                                     <p>Total Guests</p>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                             <div class="card">
                                 <div class="icon"><i class="fas fa-user-plus"></i></div>
                                 <div class="text">
-                                    <h1>1455</h1>
+                                    <h1>{{$totalPlusOne}}</h1>
                                     <p>Total Plus One</p>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                             <div class="card">
                                 <div class="icon"><i class="fas fa-user-shield"></i></div>
                                 <div class="text">
-                                    <h1>32</h1>
+                                    <h1>{{$totalAdmin}}</h1>
                                     <p>Total Admin</p>
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                             <div class="card">
                                 <div class="icon"><i class="fas fa-check-circle"></i></div>
                                 <div class="text">
-                                    <h1>43</h1>
+                                    <h1>{{$totalComing}}</h1>
                                     <p>Total Coming</p>
                                 </div>
                             </div>
